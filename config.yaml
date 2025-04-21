@@ -1,0 +1,51 @@
+# MS MARCO Search Engine - Configuration
+# Copyright (c) 2025 Perceptron Party Team (Yurii, Pyry, Dimitris, Dimitar)
+# Created: 2025-04-21
+
+# --- General Paths ---
+paths:
+  # Input Data (MS MARCO v1.1 - Assumes download/placement)
+  # Example using HuggingFace datasets structure might differ
+  train_triples: "data/msmarco/train_triples.tsv" # Placeholder path
+  val_triples: "data/msmarco/val_triples.tsv"   # Placeholder path
+  corpus_embeddings: "models/two_tower/corpus_embeddings.pt" # For inference
+
+  # Word2Vec Artifacts (Link to your Week 1 outputs)
+  # Ensure these paths are correct relative to this project
+  vocab_file: "../models/word2vec/text8_vocab_NWAll_MF5.json" # Example from W1
+  pretrained_embeddings: "../models/word2vec/SkipGram_D128_W5_NWAll_MF5_E3_LR0.001_BS512/model_state.pth" # Example from W1
+
+  # Two-Tower Model Output
+  model_save_dir: "models/two_tower"
+  log_dir: "logs"
+  log_file_name: "two_tower_search.log"
+
+# --- Word Embedding Parameters (from loaded model) ---
+embeddings:
+  freeze: True # Freeze pre-trained embeddings during tower training?
+  # embed_dim will be inferred from loaded file usually
+
+# --- Two Tower Model Hyperparameters ---
+two_tower:
+  model_type: "RNN" # Could be RNN, GRU, LSTM, BiLSTM etc.
+  shared_document_encoder: True # Use same encoder for pos/neg docs?
+  hidden_dim: 256 # Dimensionality of RNN hidden state / final encoding
+  num_layers: 1 # Number of layers in RNN
+  dropout: 0.1 # Dropout probability in RNN
+  bidirectional: False # Use bidirectional RNN?
+
+# --- Training Hyperparameters ---
+training:
+  epochs: 5
+  batch_size: 128
+  learning_rate: 0.0005 # Often lower for fine-tuning / triplet loss
+  margin: 0.2 # Margin for Triplet Loss
+  distance_metric: "cosine" # 'cosine' or 'euclidean'
+
+# --- Logging Configuration ---
+logging:
+  log_level: "INFO"
+  log_file_enabled: True
+  log_console_enabled: True
+  log_max_bytes: 10485760 # 10 MB
+  log_backup_count: 5
