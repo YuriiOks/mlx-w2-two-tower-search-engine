@@ -96,7 +96,8 @@ python scripts/train_two_tower.py --epochs 10 --lr 0.0001
 # Example: Disable W&B logging for a quick test
 python scripts/train_two_tower.py --epochs 1 --no-wandb
 ```
-        Use `python scripts/train_two_tower.py --help` for all options.
+
+Use `python scripts/train_two_tower.py --help` for all options.
 
 4.  **Evaluation:** 📈 Run the evaluation script (once implemented):
 ```bash
