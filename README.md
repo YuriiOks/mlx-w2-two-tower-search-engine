@@ -39,33 +39,33 @@ A detailed breakdown is available in `docs/STRUCTURE.md`.
 ## Setup 💻
 
 1.  **Clone the Repository:** 📥
-        ```bash
-        git clone https://github.com/ocmoney/perceptron-party-search.git # Replace with your actual repo URL if different
-        cd perceptron-party-search
-        ```
+```bash
+git clone https://github.com/ocmoney/perceptron-party-search.git # Replace with your actual repo URL if different
+cd perceptron-party-search
+```
 2.  **Initialize Git (if not cloned):** 🌱
-        ```bash
-        git init && git add . && git commit -m "Initial project structure"
-        ```
+```bash
+git init && git add . && git commit -m "Initial project structure"
+```
 3.  **Create & Activate Virtual Environment:** 🐍
-        ```bash
-        # Using venv
-        python3 -m venv .venv
-        source .venv/bin/activate  # On Windows use `\.venv\Scripts\activate`
+```bash
+# Using venv
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows use `\.venv\Scripts\activate`
 
-        # Or using Conda
-        # conda create -n pparty python=3.11 # Or your preferred version
-        # conda activate pparty
-        ```
+# Or using Conda
+# conda create -n pparty python=3.11 # Or your preferred version
+# conda activate pparty
+```
 4.  **Install Dependencies:** 📦
-        ```bash
-        pip install -r requirements.txt
-        ```
+```bash
+pip install -r requirements.txt
+```
 5.  **Weights & Biases Login:** 🔑
-        ```bash
-        wandb login
-        ```
-        (Follow prompts to paste your API key from wandb.ai/authorize)
+```bash
+wandb login
+```
+(Follow prompts to paste your API key from wandb.ai/authorize)
 
 6.  **Download MS MARCO Data:** 🗃️
         *   Obtain the MS MARCO v1.1 dataset (e.g., via Hugging Face `datasets` library or direct download).
@@ -81,26 +81,26 @@ A detailed breakdown is available in `docs/STRUCTURE.md`.
 
 1.  **Configuration:** ⚙️ Review and adjust parameters in `config.yaml` (e.g., `two_tower` settings like `rnn_type`, `hidden_dim`; `training` settings like `epochs`, `lr`, `margin`).
 2.  **Run Training:** 🏃‍♂️ Execute the main training script from the project root directory:
-        ```bash
-        python scripts/train_two_tower.py
-        ```
+```bash
+python scripts/train_two_tower.py
+```
         *   Training progress will be shown in the console (including `tqdm` bars).
         *   Metrics and configuration will be logged to Weights & Biases. A link to the run will be printed.
         *   The trained model and artifacts will be saved locally in a run-specific subdirectory under `models/two_tower/`.
 
 3.  **Override Config (Optional):** 🔄 Use command-line arguments to override `config.yaml` settings for specific runs:
-        ```bash
-        # Example: Train for more epochs with a smaller learning rate
-        python scripts/train_two_tower.py --epochs 10 --lr 0.0001
+```bash
+# Example: Train for more epochs with a smaller learning rate
+python scripts/train_two_tower.py --epochs 10 --lr 0.0001
 
-        # Example: Disable W&B logging for a quick test
-        python scripts/train_two_tower.py --epochs 1 --no-wandb
-        ```
+# Example: Disable W&B logging for a quick test
+python scripts/train_two_tower.py --epochs 1 --no-wandb
+```
         Use `python scripts/train_two_tower.py --help` for all options.
 
 4.  **Evaluation:** 📈 Run the evaluation script (once implemented):
-        ```bash
-        python scripts/evaluate_two_tower.py --run-dir models/two_tower/TwoTower_RNN_... # Path to saved run
+```bash
+python scripts/evaluate_two_tower.py --run-dir models/two_tower/TwoTower_RNN_... # Path to saved run
         ```
 
 ## Future Work & Considerations 🔮
