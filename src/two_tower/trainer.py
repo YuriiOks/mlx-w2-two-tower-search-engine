@@ -147,3 +147,5 @@ def train_two_tower_model(
         logger.info(f"💾 Final model state saved to: {model_path}") # Log the correct path
     except Exception as e:
         logger.error(f"❌ Failed to save final model: {e}")
+
+    return epoch_losses
