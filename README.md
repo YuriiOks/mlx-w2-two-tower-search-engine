@@ -1,8 +1,12 @@
 <!-- Badges -->
 <p align="center">
-    <a href="https://github.com/ocmoney/perceptron-party-search"><img src="https://img.shields.io/badge/GitHub-Repository-blue?style=for-the-badge&logo=github" alt="GitHub Repository"/></a>
-    <!-- Add other badges if relevant -->
-    <img src="https://img.shields.io/github/license/ocmoney/perceptron-party-search?style=for-the-badge" alt="License"/>
+    <a href="https://github.com/YuriiOks/mlx-w2-two-tower-search-engine"><img src="https://img.shields.io/badge/GitHub-Repository-blue?style=for-the-badge&logo=github" alt="GitHub Repository"/></a>
+    <img src="https://img.shields.io/github/contributors/YuriiOks/mlx-w2-two-tower-search-engine?style=for-the-badge" alt="Contributors"/>
+    <img src="https://img.shields.io/github/issues/YuriiOks/mlx-w2-two-tower-search-engine?style=for-the-badge" alt="Issues"/>
+    <img src="https://img.shields.io/github/license/YuriiOks/mlx-w2-two-tower-search-engine?style=for-the-badge" alt="License"/>
+</p>
+
+
 </p>
 
 # MS MARCO Search Engine 🗼🗼 🔍 🧠
