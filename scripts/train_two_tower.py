@@ -33,39 +33,45 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from src.word2vec.vocabulary import Vocabulary # Example import path
 from src.two_tower.model import TwoTowerModel
 from src.two_tower.dataset import (
-    TripletDataset, collate_triplets,
-    load_msmarco_data, generate_triplets_from_data # Placeholders
+    load_msmarco_hf,             # Function to load HF dataset
+    generate_triplets_from_dataset, # Function to generate triplets
+    TripletDataset,              # PyTorch Dataset class
+    collate_triplets             # Function for padding batches
 )
+
 from src.two_tower.trainer import train_two_tower_model
 
 def parse_train_args(config):
     '''Parse arguments specific to two-tower training.'''
     parser = argparse.ArgumentParser(description="Train Two-Tower Model.")
-    # --- Add relevant args, using config for defaults ---
+    # --- Read defaults from CORRECT config sections ---
     paths = config.get('paths', {})
-    training_cfg = config.get('training', {})
-    w2v_paths = config.get('paths', {}) # Reuse paths for w2v artifacts
+    # Use 'two_tower_training' section for these defaults
+    training_cfg = config.get('two_tower_training', {}) # <--- CHANGE HERE
 
     parser.add_argument('--train-data', type=str, default=paths.get('train_triples'), help='Path to training data (e.g., triples TSV)')
-    parser.add_argument('--model-save-dir', type=str, default=paths.get('model_save_dir'), help='Base directory to save models')
-    parser.add_argument('--vocab-path', type=str, default=w2v_paths.get('vocab_file'), help='Path to pre-trained vocab JSON')
-    parser.add_argument('--embedding-path', type=str, default=w2v_paths.get('pretrained_embeddings'), help='Path to pre-trained embedding state_dict (.pth)')
+    # Default to the specific two_tower save dir from config
+    parser.add_argument('--model-save-dir', type=str, default=paths.get('two_tower_model_save_dir'), help='Base directory to save models') # <--- CHANGE HERE
+    parser.add_argument('--vocab-path', type=str, default=paths.get('vocab_file'), help='Path to pre-trained vocab JSON')
+    # Default to the specific embedding path from config
+    parser.add_argument('--embedding-path', type=str, default=paths.get('pretrained_embeddings'), help='Path to pre-trained embedding state_dict (.pth)') # <--- CHANGE HERE
 
+    # Use training_cfg read from 'two_tower_training'
     parser.add_argument('--epochs', type=int, default=training_cfg.get('epochs'), help='Number of training epochs')
-    parser.add_argument('--batch-size', type=int, default=training_cfg.get('batch_size'), help='Training batch size')
-    parser.add_argument('--lr', type=float, default=training_cfg.get('learning_rate'), help='Learning rate')
+    parser.add_argument('--batch-size', type=int, default=training_cfg.get('batch_size'), help='Training batch size') # <--- Should now read from training_cfg
+    parser.add_argument('--lr', type=float, default=training_cfg.get('learning_rate'), help='Learning rate') # <--- Should now read from training_cfg
 
     # Add W&B args
     parser.add_argument('--wandb-project', type=str, default='perceptron-search-two-tower', help='W&B project')
-    parser.add_argument('--wandb-entity', type=str, default=None, help='W&B entity')
+    parser.add_argument('--wandb-entity', type=str, default=None, help='W&B entity') # Keep default=None if not always needed
     parser.add_argument('--no-wandb', action='store_true', default=False, help='Disable W&B')
 
     args = parser.parse_args()
     logger.info("--- Effective Training Configuration ---")
+    # Check the parsed args carefully after changes
     for arg, value in vars(args).items(): logger.info(f"  --{arg.replace('_', '-'):<20}: {value}")
     logger.info("------------------------------------")
     return args
-
 
 def main():
     config = load_config()
@@ -108,10 +114,63 @@ def main():
         return
 
     # --- Load and Prepare MS MARCO Data ---
-    # TODO: Replace placeholders with actual data loading & triplet generation
     logger.info("--- Preparing MS MARCO Data ---")
-    # train_df = load_msmarco_data(args.train_data)
-    # indexed_triplets = generate_triplets_from_data(train_df, vocab)
+    try:
+        # 1. Load HF Dataset
+        # Use 'train' split for training. Set streaming=False for standard loading.
+        train_dataset_hf = load_msmarco_hf(split='train', streaming=False)
+        if train_dataset_hf is None:
+            raise RuntimeError("Failed to load MS MARCO Hugging Face dataset.")
+
+        # 2. Generate Tokenized Triplets
+        # Get max lengths from config, provide defaults if missing
+        tower_config = config.get('two_tower', {})
+        max_q_len = tower_config.get('max_query_len', 64)  # Default 64
+        max_d_len = tower_config.get('max_doc_len', 256) # Default 256
+
+        # Generate triplets from the full training dataset
+        # Set max_triplets=None to process everything (or a number for testing)
+        logger.info("Generating tokenized triplets from the loaded dataset...")
+        tokenized_triplets = generate_triplets_from_dataset(
+            train_dataset_hf,
+            vocab,           # Pass the loaded vocabulary object
+            max_q_len,
+            max_d_len,
+            max_triplets=None # Process full dataset for real training
+            # max_triplets=10000 # Or set a limit for a faster test run initially
+        )
+
+        if not tokenized_triplets:
+            raise RuntimeError("No tokenized triplets were generated. Check data or vocab.")
+
+        # 3. Create PyTorch Dataset
+        train_dataset = TripletDataset(tokenized_triplets)
+
+        # 4. Determine Padding Index
+        # Use the UNK index from the vocabulary as the padding value
+        padding_idx = vocab.unk_index if hasattr(vocab, 'unk_index') else 0
+        logger.info(f"Using padding index: {padding_idx}")
+
+
+        # 5. Create DataLoader
+        # Use number of CPU cores for num_workers, adjust if needed
+        num_workers = os.cpu_count() // 2 if os.cpu_count() else 0
+        train_dataloader = DataLoader(
+            train_dataset,
+            batch_size=args.batch_size, # From command line args/config
+            shuffle=True,               # Shuffle training data
+            collate_fn=lambda batch: collate_triplets(batch, padding_value=padding_idx),
+            num_workers=num_workers,
+            pin_memory=True if device.type == 'cuda' else False # pin_memory useful for GPU
+        )
+        logger.info(f"✅ MS MARCO DataLoader ready ({len(train_dataset)} triplets).")
+
+    except Exception as e:
+        logger.error(f"❌ Failed during data preparation: {e}", exc_info=True)
+        if run: run.finish(exit_code=1) # Finish W&B run if it started
+        return # Stop execution
+
+
     # Using placeholder data for now:
     logger.warning("Using placeholder data for training!")
     indexed_triplets = [{'query': [1,2,3], 'pos_doc': [4,5,6,7], 'neg_doc': [8,9,1,2]} for _ in range(1000)] # Example
@@ -143,10 +202,10 @@ def main():
     # --- Train ---
     epoch_losses = train_two_tower_model(
         model=model,
-        train_dataloader=train_dataloader,
+        train_dataloader=train_dataloader, # Now uses the real dataloader!
         optimizer=optimizer,
         device=device,
-        config=config, # Pass config for training params
+        config=config,
         wandb_run=run
     )
 
