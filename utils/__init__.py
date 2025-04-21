@@ -11,8 +11,11 @@ from .logging import logger
 # Import the get_device function from device_setup.py
 from .device_setup import get_device
 
+# 
+from run_utils import load_config, format_num_words, format_num_words, plot_losses
+
 # Define what gets imported with 'from utils import *'
-__all__ = ['logger', 'get_device']
+__all__ = ['logger', 'get_device', 'load_config', 'format_num_words', 'save_losses', 'plot_losses']
 
 # Optional: Log that the package is being initialized
 # Note: logger might already be configured here due to import above
