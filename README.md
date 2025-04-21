@@ -101,7 +101,7 @@ python scripts/train_two_tower.py --epochs 1 --no-wandb
 4.  **Evaluation:** 📈 Run the evaluation script (once implemented):
 ```bash
 python scripts/evaluate_two_tower.py --run-dir models/two_tower/TwoTower_RNN_... # Path to saved run
-        ```
+```
 
 ## Future Work & Considerations 🔮
 
