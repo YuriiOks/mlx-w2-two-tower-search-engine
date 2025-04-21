@@ -1,7 +1,9 @@
-# utils/logging.py
+# Two Tower Search
+# File: utils/logging.py
 # Copyright (c) 2025 Perceptron Party Team (Yurii, Pyry, Dimitris, Dimitar)
 # Description: Logging setup for the project.
 # Created: 2025-04-21
+# Updated: 2025-04-21
 
 import logging
 import os
@@ -23,7 +25,7 @@ LOG_FORMAT = os.environ.get(
     '%(asctime)s | %(name)s | %(levelname)-8s | [%(filename)s:%(lineno)d] | %(message)s'
 )
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
-LOGGER_NAME = "PerceptronSearch" # Specific logger name
+LOGGER_NAME = "Perceptron Party" # Specific logger name
 
 logger = logging.getLogger(LOGGER_NAME)
 _logging_initialized = False
