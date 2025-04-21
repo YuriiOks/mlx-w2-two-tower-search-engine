@@ -68,14 +68,14 @@ wandb login
 (Follow prompts to paste your API key from wandb.ai/authorize)
 
 6.  **Download MS MARCO Data:** 🗃️
-        *   Obtain the MS MARCO v1.1 dataset (e.g., via Hugging Face `datasets` library or direct download).
-        *   Place the necessary files (like training triples) into the `data/msmarco/` directory.
-        *   Update the paths in `config.yaml` (`paths.train_triples`, `paths.val_triples`) if needed.
+    *   Obtain the MS MARCO v1.1 dataset (e.g., via Hugging Face `datasets` library or direct download).
+    *   Place the necessary files (like training triples) into the `data/msmarco/` directory.
+    *   Update the paths in `config.yaml` (`paths.train_triples`, `paths.val_triples`) if needed.
 
 7.  **Configure Word2Vec Paths:** ⚠️
-        *   **CRITICAL:** Edit `config.yaml`.
-        *   Update `paths.vocab_file` to the correct path of the `*.json` vocabulary file from your Week 1 project.
-        *   Update `paths.pretrained_embeddings` to the correct path of the `.pth` model state file containing the embeddings you want to use (e.g., the SkipGram one) from your Week 1 project.
+    *   **CRITICAL:** Edit `config.yaml`.
+    *   Update `paths.vocab_file` to the correct path of the `*.json` vocabulary file from your Week 1 project.
+    *   Update `paths.pretrained_embeddings` to the correct path of the `.pth` model state file containing the embeddings you want to use (e.g., the SkipGram one) from your Week 1 project.
 
 ## Usage 🚦
 
@@ -84,9 +84,9 @@ wandb login
 ```bash
 python scripts/train_two_tower.py
 ```
-        *   Training progress will be shown in the console (including `tqdm` bars).
-        *   Metrics and configuration will be logged to Weights & Biases. A link to the run will be printed.
-        *   The trained model and artifacts will be saved locally in a run-specific subdirectory under `models/two_tower/`.
+*   Training progress will be shown in the console (including `tqdm` bars).
+*   Metrics and configuration will be logged to Weights & Biases. A link to the run will be printed.
+*   The trained model and artifacts will be saved locally in a run-specific subdirectory under `models/two_tower/`.
 
 3.  **Override Config (Optional):** 🔄 Use command-line arguments to override `config.yaml` settings for specific runs:
 ```bash
