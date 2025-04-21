@@ -177,3 +177,7 @@ wandb/
 data/
 .DS_Store
 *.DS_Store
+ms_marco_entry.txt
+PROJECT_DOCUMENTATION.html
+PROJECT_DOCUMENTATION.md
+scripts/generate_project_doc.py
