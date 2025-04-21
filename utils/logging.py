@@ -10,6 +10,7 @@ import os
 import sys
 from logging.handlers import RotatingFileHandler
 from datetime import datetime
+import multiprocessing
 
 # --- Config ---
 # Read from env or use defaults likely set by config.yaml loading later
@@ -65,6 +66,14 @@ def setup_logging(log_dir=LOGS_DIR, log_file=LOG_FILE_NAME): # Allow override
     else: print(f"⚠️ Warning: No handlers configured for {LOGGER_NAME}.")
     _logging_initialized = True
 
-if not _logging_initialized: setup_logging()
+# Modify the automatic setup call at the very bottom:
+if multiprocessing.current_process().name == 'MainProcess' and not _logging_initialized:
+    setup_logging()
 
-if __name__ == "__main__": logger.info("Logging module test.")
+# Optional: Keep the direct run check if you want to test logging.py itself
+if __name__ == "__main__":
+     if multiprocessing.current_process().name == 'MainProcess':
+          logger.info("Logging module test (MainProcess).")
+     else:
+          # Worker processes might still hit this if run directly, but it's less common
+          print(f"Logging module test (Worker Process: {multiprocessing.current_process().name}). Logger setup skipped.")
