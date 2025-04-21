@@ -175,4 +175,5 @@ cython_debug/
 
 wandb/
 data/
-models/
+.DS_Store
+*.DS_Store
