@@ -30,8 +30,8 @@ from utils import (
 # This might require adding 'src' to sys.path if running from scripts/
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from src.word2vec.vocabulary import Vocabulary # Example import path
-from src.two_tower.model import TwoTowerModel
+from src.word2vec.vocabulary import Vocabulary  # Example import path
+from src.two_tower.model import TwoTowerModelAveragePooling
 from src.two_tower.dataset import (
     TripletDataset, collate_triplets,
     load_msmarco_data, generate_triplets_from_data # Placeholders
@@ -49,11 +49,17 @@ def parse_train_args(config):
     parser.add_argument('--train-data', type=str, default=paths.get('train_triples'), help='Path to training data (e.g., triples TSV)')
     parser.add_argument('--model-save-dir', type=str, default=paths.get('model_save_dir'), help='Base directory to save models')
     parser.add_argument('--vocab-path', type=str, default=w2v_paths.get('vocab_file'), help='Path to pre-trained vocab JSON')
-    parser.add_argument('--embedding-path', type=str, default=w2v_paths.get('pretrained_embeddings'), help='Path to pre-trained embedding state_dict (.pth)')
+    # Check multiple possible locations for embedding path
+    embedding_path = (config.get('two_tower_average_pooling', {}).get('paths', {}).get('pretrained_embeddings') or 
+                      config.get('two_tower', {}).get('paths', {}).get('pretrained_embeddings') or
+                      paths.get('pretrained_embeddings'))
+    parser.add_argument('--embedding-path', type=str, default=embedding_path, help='Path to pre-trained embedding state_dict (.pth)')
 
-    parser.add_argument('--epochs', type=int, default=training_cfg.get('epochs'), help='Number of training epochs')
-    parser.add_argument('--batch-size', type=int, default=training_cfg.get('batch_size'), help='Training batch size')
-    parser.add_argument('--lr', type=float, default=training_cfg.get('learning_rate'), help='Learning rate')
+    # Use two_tower_training config section for training parameters
+    tt_training_cfg = config.get('two_tower_training', {})
+    parser.add_argument('--epochs', type=int, default=tt_training_cfg.get('epochs'), help='Number of training epochs')
+    parser.add_argument('--batch-size', type=int, default=tt_training_cfg.get('batch_size'), help='Training batch size')
+    parser.add_argument('--lr', type=float, default=tt_training_cfg.get('learning_rate'), help='Learning rate')
 
     # Add W&B args
     parser.add_argument('--wandb-project', type=str, default='perceptron-search-two-tower', help='W&B project')
@@ -130,13 +136,18 @@ def main():
 
     # --- Initialize Model & Optimizer ---
     logger.info("--- Initializing Two-Tower Model ---")
-    model = TwoTowerModel(
-        vocab_size=len(vocab),
-        embed_dim=embed_dim, # Use inferred dim
-        hidden_dim=config.get('two_tower', {}).get('hidden_dim', 256),
-        config=config, # Pass full config
-        pretrained_weights=pretrained_weights
-    )
+    # Get configuration from two_tower_average_pooling section if it exists, otherwise use default model settings
+    tt_avg_pooling_config = config.get('two_tower_average_pooling', {})
+    
+    # Use the specific model type config or fall back to checking general model_type setting
+    if tt_avg_pooling_config:
+        model = TwoTowerModelAveragePooling(
+            vocab_size=len(vocab),
+            embed_dim=embed_dim, # Use inferred dim
+            hidden_dim=tt_avg_pooling_config.get('hidden_dim', 256),
+            config=config, # Pass full config
+            pretrained_weights=pretrained_weights
+        )
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
     logger.info("Model and optimizer ready.")
 
