@@ -1,6 +1,6 @@
 # MS MARCO Search Engine - Project Structure
 
-This document outlines the directory structure and the purpose of key files for the Week 2 Two-Tower Search Engine project by **Team Perceptron Party**.
+This document outlines the directory structure and the purpose of all key files for the Week 2 Two-Tower Search Engine project by **Team Perceptron Party**.
 
 ```
 .
@@ -8,26 +8,25 @@ This document outlines the directory structure and the purpose of key files for 
 ├── data/                    # 📊 Input data
 │   └── msmarco/             # MS MARCO specific data (needs population)
 ├── docs/                    # 📄 Project documentation
-│   ├── STRUCTURE.md         # This file!
+│   ├── STRUCTURE.md         # This file (project structure and file descriptions)
 │   └── DEV_PLAN_W2.md       # Week 2 Development Plan & Tasks
 ├── logs/                    # 📝 Runtime logs (Gitignored)
 ├── models/                  # 🧠 Saved model artifacts (Gitignored)
 │   └── two_tower/           # Run-specific subdirs for the Two-Tower model
-│       └── TwoTower_RNN_.../ # Example run directory
-│           ├── two_tower_final.pth
-│           ├── training_losses.json
-│           └── training_loss.png
+│       └── .../             # Example run directory (named per run)
+│           ├── two_tower_final.pth      # Final model weights
+│           ├── training_losses.json     # Training loss history
+│           └── training_loss.png        # Training loss plot
 ├── notebooks/               # 📓 Jupyter notebooks for exploration & evaluation
-│   └── W2_MSMARCO_EDA.ipynb # Placeholder for MS MARCO EDA
-│   └── W2_Evaluation.ipynb  # Placeholder for evaluating retrieval
+│   └── (add EDA/evaluation notebooks as needed)
 ├── requirements.txt         # 📦 Python package dependencies
 ├── scripts/                 # ▶️ Runnable scripts
-│   ├── train_two_tower.py   # Script to orchestrate Two-Tower training
-│   └── evaluate_two_tower.py# Placeholder for evaluation script
-│   └── (inference.py)       # Optional: Script for running inference later
-├── setup_project.py         # The script used to generate this structure
+│   ├── train_two_tower.py   # Main script to train the Two-Tower model
+│   ├── evaluate_two_tower.py# Script to evaluate the trained model
+│   └── train_word2vec.py    # Script to train Word2Vec (Week 1, reused)
+├── setup_project.py         # Script to generate the initial project structure
 ├── src/                     # 🐍 Core Python source code modules
-│   ├── __init__.py
+│   ├── __init__.py          # Makes src a Python package
 │   └── two_tower/           # ✨ Two-Tower implementation modules
 │       ├── __init__.py
 │       ├── dataset.py       # MS MARCO data loading, triplet generation, Dataset/Collation
@@ -40,21 +39,38 @@ This document outlines the directory structure and the purpose of key files for 
 │   └── run_utils.py         # Config loading, artifact saving helpers
 ├── .gitignore               # Files/directories for Git to ignore
 ├── README.md                # 👋 High-level project overview
+├── LICENSE                  # Project license (MIT)
 └── wandb/                   # ☁️ Local W&B logs/cache (In .gitignore)
     └── ...
 ```
 
 **Directory & Key File Purposes:**
 
-*   **`config.yaml`** ⚙️: Central configuration for Week 2, including paths to MS MARCO data, Word2Vec artifacts, Two-Tower hyperparameters (RNN type, hidden dims), and training settings (Triplet Loss margin, LR, epochs).
-*   **`data/msmarco/`** 📊: Designated location for storing the downloaded MS MARCO dataset files (v1.1 recommended). Needs to be populated.
-*   **`docs/`** 📄: Project documentation specific to Week 2 (Structure, Dev Plan).
-*   **`logs/`** 📝: Runtime logs for this project. Should be gitignored.
-*   **`models/two_tower/`** 🧠: Will store run-specific subdirectories containing the trained Two-Tower model state (`.pth`), loss history, etc. Should be gitignored.
-*   **`notebooks/`** 📓: For EDA specifically on the MS MARCO dataset and for evaluating the trained retrieval model.
-*   **`scripts/`** ▶️: Contains the main runnable scripts for training (`train_two_tower.py`) and potentially evaluation/inference.
-*   **`src/two_tower/`** ✨: Core implementation modules for the Two-Tower architecture, data handling (MS MARCO specifics, triplet generation), and the Triplet Loss training loop.
-*   **`utils/`** 🛠️: Shared utilities (logging, device setup, config loading, artifact saving) reused from Week 1 setup.
-*   **`README.md`** 👋: Updated overview for the Week 2 project, setup, and usage instructions.
-*   **`requirements.txt`** 📦: Dependencies including PyTorch, PyYAML, W&B, and potentially Hugging Face `datasets`.
-*   **`.gitignore`**: Essential for ignoring `logs/`, `models/`, `wandb/`, `.venv/`, `__pycache__/`, etc.
+*   **`config.yaml`** ⚙️: Central configuration for all paths, hyperparameters, and logging settings for both Word2Vec and Two-Tower models.
+*   **`data/msmarco/`** 📊: Location for the MS MARCO dataset files (to be downloaded/placed here).
+*   **`docs/`** 📄: Project documentation, including this structure file and the development plan.
+*   **`logs/`** 📝: Runtime logs generated by scripts (should be gitignored).
+*   **`models/two_tower/`** 🧠: Stores run-specific subdirectories with trained model weights, loss history, and plots (should be gitignored).
+*   **`notebooks/`** 📓: Jupyter notebooks for EDA, evaluation, or prototyping (add as needed).
+*   **`requirements.txt`** 📦: All Python dependencies for the project (including torch, pandas, scikit-learn, PyYAML, wandb, etc.).
+*   **`scripts/`** ▶️: Main runnable scripts:
+    * `train_two_tower.py`: Trains the Two-Tower model using config and utils.
+    * `evaluate_two_tower.py`: Evaluates the trained model (metrics, retrieval, etc.).
+    * `train_word2vec.py`: Trains Word2Vec (from Week 1, reused for embedding preparation).
+*   **`setup_project.py`**: Script to generate the initial directory structure and template files.
+*   **`src/`** 🐍: Core Python source code:
+    * `__init__.py`: Makes `src` a package.
+    * `two_tower/`: Implementation of the Two-Tower model:
+        * `__init__.py`: Package init.
+        * `dataset.py`: Data loading, triplet generation, PyTorch Dataset and collation.
+        * `model.py`: Two-Tower model definition (embedding, RNN towers, forward pass).
+        * `trainer.py`: Training loop and Triplet Loss logic.
+*   **`utils/`** 🛠️: Shared utilities:
+    * `__init__.py`: Package init, imports helpers.
+    * `device_setup.py`: Device selection (CPU/MPS/CUDA).
+    * `logging.py`: Logging setup and configuration.
+    * `run_utils.py`: Config loading, artifact saving, plotting helpers.
+*   **`.gitignore`**: Ensures logs, models, wandb, venv, and other non-source files are not tracked by git.
+*   **`README.md`** 👋: High-level project overview, setup, and usage instructions.
+*   **`LICENSE`**: Project license (MIT).
+*   **`wandb/`** ☁️: Local Weights & Biases logs/cache (should be gitignored).
