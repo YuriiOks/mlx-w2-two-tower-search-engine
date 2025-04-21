@@ -7,7 +7,7 @@
 paths:
   corpus_file: "data/text8.txt"                    # Path to the training corpus
   vocab_file: "models/word2vec/text8_vocab.json"   # Path to save/load vocabulary
-  model_save_dir: "models/word2vec"                # Directory to save trained w2v model
+  model_save_dir: "models/two_tower_average_pooling"                # Directory to save trained w2v model
   log_dir: "logs"                                  # Directory for log files
   log_file_name: "dropout_disco.log"               # Name for the main log file
 
@@ -40,6 +40,14 @@ two_tower:
   num_layers: 1 # Number of layers in RNN
   dropout: 0.1 # Dropout probability in RNN
   bidirectional: False # Use bidirectional RNN?
+
+# --- Two Tower Model Hyperparameters ---
+two_tower_average_pooling:
+  model_type: "AveragePooling"
+  hidden_dim: 256 # Dimensionality of RNN hidden state / final encoding
+  num_layers: 2 # Number of layers in RNN
+  paths:
+    pretrained_embeddings: "models/word2vec/CBOW_D128_W5_NWAll_MF5_E15_LR0.001_BS512/model_state.pth"
 
 # --- Two Tower Training Hyperparameters ---
 two_tower_training:
