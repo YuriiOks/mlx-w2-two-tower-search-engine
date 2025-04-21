@@ -34,20 +34,17 @@ embeddings:
 
 # --- Two Tower Model Hyperparameters ---
 two_tower:
-  model_type: "RNN" # Could be RNN, GRU, LSTM, BiLSTM etc.
-  shared_document_encoder: True # Use same encoder for pos/neg docs?
-  hidden_dim: 256 # Dimensionality of RNN hidden state / final encoding
-  num_layers: 1 # Number of layers in RNN
-  dropout: 0.1 # Dropout probability in RNN
-  bidirectional: False # Use bidirectional RNN?
-
-# --- Two Tower Model Hyperparameters ---
-two_tower_average_pooling:
-  model_type: "AveragePooling"
+  model_type: "AveragePooling" # Could be AveragePooling, RNN, GRU, LSTM, BiLSTM etc.
   hidden_dim: 256 # Dimensionality of RNN hidden state / final encoding
   num_layers: 2 # Number of layers in RNN
   paths:
     pretrained_embeddings: "models/word2vec/CBOW_D128_W5_NWAll_MF5_E15_LR0.001_BS512/model_state.pth"
+
+  # parameters below not relevant for average pooling model
+  shared_document_encoder: True # Use same encoder for pos/neg docs?
+  dropout: 0.1 # Dropout probability in RNN
+  bidirectional: False # Use bidirectional RNN?
+  
 
 # --- Two Tower Training Hyperparameters ---
 two_tower_training:

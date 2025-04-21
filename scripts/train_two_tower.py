@@ -50,8 +50,7 @@ def parse_train_args(config):
     parser.add_argument('--model-save-dir', type=str, default=paths.get('model_save_dir'), help='Base directory to save models')
     parser.add_argument('--vocab-path', type=str, default=w2v_paths.get('vocab_file'), help='Path to pre-trained vocab JSON')
     # Check multiple possible locations for embedding path
-    embedding_path = (config.get('two_tower_average_pooling', {}).get('paths', {}).get('pretrained_embeddings') or 
-                      config.get('two_tower', {}).get('paths', {}).get('pretrained_embeddings') or
+    embedding_path = (config.get('two_tower', {}).get('paths', {}).get('pretrained_embeddings') or
                       paths.get('pretrained_embeddings'))
     parser.add_argument('--embedding-path', type=str, default=embedding_path, help='Path to pre-trained embedding state_dict (.pth)')
 
@@ -137,7 +136,7 @@ def main():
     # --- Initialize Model & Optimizer ---
     logger.info("--- Initializing Two-Tower Model ---")
     # Get configuration from two_tower_average_pooling section if it exists, otherwise use default model settings
-    tt_avg_pooling_config = config.get('two_tower_average_pooling', {})
+    tt_avg_pooling_config = config.get('two_tower', {'model_type': 'AveragePooling'})
     
     # Use the specific model type config or fall back to checking general model_type setting
     if tt_avg_pooling_config:
