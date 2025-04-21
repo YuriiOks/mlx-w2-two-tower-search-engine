@@ -256,6 +256,7 @@ def main():
         config=config,
         wandb_run=run,
         epochs=args.epochs
+        margin=config.get('two_tower_training', {}).get('margin', 0.2),
     )
 
     # --- Finalize ---
