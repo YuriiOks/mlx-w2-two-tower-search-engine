@@ -1,24 +1,31 @@
 # MS MARCO Search Engine - Configuration
 # Copyright (c) 2025 Perceptron Party Team (Yurii, Pyry, Dimitris, Dimitar)
 # Created: 2025-04-21
+# Updated: 2025-04-21
 
 # --- General Paths ---
 paths:
-  # Input Data (MS MARCO v1.1 - Assumes download/placement)
-  # Example using HuggingFace datasets structure might differ
-  train_triples: "data/msmarco/train_triples.tsv" # Placeholder path
-  val_triples: "data/msmarco/val_triples.tsv"   # Placeholder path
-  corpus_embeddings: "models/two_tower/corpus_embeddings.pt" # For inference
+  corpus_file: "data/text8.txt"                    # Path to the training corpus
+  vocab_file: "models/word2vec/text8_vocab.json"   # Path to save/load vocabulary
+  model_save_dir: "models/word2vec"                # Directory to save trained w2v model
+  log_dir: "logs"                                  # Directory for log files
+  log_file_name: "dropout_disco.log"               # Name for the main log file
 
-  # Word2Vec Artifacts (Link to your Week 1 outputs)
-  # Ensure these paths are correct relative to this project
-  vocab_file: "../models/word2vec/text8_vocab_NWAll_MF5.json" # Example from W1
-  pretrained_embeddings: "../models/word2vec/SkipGram_D128_W5_NWAll_MF5_E3_LR0.001_BS512/model_state.pth" # Example from W1
+# --- Word2Vec Model Hyperparameters ---
+word2vec:
+  model_type: "SkipGram"              # SkipGram model implementation
+  embedding_dim: 128                 # Dimensionality of word embeddings
+  window_size: 5                     # Context window size (words on each side)
+  min_word_freq: 5                   # Minimum word frequency for vocabulary
+  negative_samples: 5                # Number of negative samples for training
 
-  # Two-Tower Model Output
-  model_save_dir: "models/two_tower"
-  log_dir: "logs"
-  log_file_name: "two_tower_search.log"
+# --- Word2Vec Training Hyperparameters ---
+word2vec_training:
+  num_words_to_process: -1           # Max words from corpus (-1 for all)
+  epochs: 15                         # Number of training epochs
+  batch_size: 512                    # Training batch size
+  learning_rate: 0.001               # Initial learning rate for Adam optimizer
+  # Add other training params here if needed (e.g., scheduler settings)
 
 # --- Word Embedding Parameters (from loaded model) ---
 embeddings:
@@ -34,8 +41,8 @@ two_tower:
   dropout: 0.1 # Dropout probability in RNN
   bidirectional: False # Use bidirectional RNN?
 
-# --- Training Hyperparameters ---
-training:
+# --- Two Tower Training Hyperparameters ---
+two_tower_training:
   epochs: 5
   batch_size: 128
   learning_rate: 0.0005 # Often lower for fine-tuning / triplet loss
