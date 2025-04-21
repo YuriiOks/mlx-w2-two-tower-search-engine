@@ -43,7 +43,8 @@ def train_epoch_two_tower(
     epoch_num: int,
     total_epochs: int,
     margin: float,
-    distance_metric: str
+    distance_metric: str,
+    wandb_run = None 
 ) -> float:
     '''Trains the Two-Tower model for one epoch using Triplet Loss.'''
     model.train()
@@ -84,7 +85,18 @@ def train_epoch_two_tower(
 
         batch_loss = loss.item()
         total_loss += batch_loss
-        if batch_idx % 50 == 0:
+
+        log_frequency = 1 # Log every 100 batches, adjust as needed
+        if wandb_run and batch_idx % log_frequency == 0:
+            # Calculate steps (optional but good practice)
+            global_step = epoch_num * num_batches + batch_idx
+            wandb_run.log({
+                "batch_loss": batch_loss,
+                "epoch_progress": (batch_idx + 1) / num_batches, # Track within epoch
+                "global_step": global_step
+            })
+
+        if batch_idx % 50 == 0: # Keep tqdm update less frequent
             data_iterator.set_postfix(loss=f"{batch_loss:.4f}")
 
     average_loss = total_loss / num_batches if num_batches > 0 else 0.0
@@ -99,11 +111,11 @@ def train_two_tower_model(
     device: torch.device,
     config: dict,  # Pass config for training params
     wandb_run=None,
-    epochs: int = 5
+    epochs: int = 5,
+    margin: float = 0.2,
 ) -> List[float]:
     '''Orchestrates training for the Two-Tower model.'''
 
-    margin = config.get('training', {}).get('margin', 0.2)
     distance_metric = config.get('training', {}).get('distance_metric', 'cosine')
     model_save_dir = config.get('paths', {}).get(
         'model_save_dir', 'models/two_tower'
@@ -119,8 +131,9 @@ def train_two_tower_model(
 
     for epoch in range(epochs):
         avg_loss = train_epoch_two_tower(
-            model, train_dataloader, optimizer, device, 
-            epoch, epochs, margin, distance_metric
+            model, train_dataloader, optimizer, device,
+            epoch, epochs, margin, distance_metric,
+            wandb_run=wandb_run # <--- PASS wandb_run HERE
         )
         logger.info(
             f"✅ Epoch {epoch+1}/{epochs} | Avg Train Loss: {avg_loss:.4f}"
