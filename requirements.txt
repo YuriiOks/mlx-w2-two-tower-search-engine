@@ -1,0 +1,14 @@
+# Core ML Libraries
+torch # Or torch==<version> torchvision torchaudio
+pandas
+numpy
+scikit-learn # Often useful for metrics, splitting
+
+# Utilities
+PyYAML # For config.yaml
+tqdm # Progress bars
+wandb # Experiment tracking
+
+# Specific Libraries (Add as needed)
+# datasets # If using HuggingFace datasets library to load MS MARCO
+# sentence-transformers # Might be useful for comparison or alternative models
