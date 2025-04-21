@@ -1,7 +1,9 @@
-# scripts/train_two_tower.py
+# Two Tower Search
+# File: scripts/train_two_tower.py
 # Copyright (c) 2025 Perceptron Party Team (Yurii, Pyry, Dimitris, Dimitar)
 # Description: Main script to train the Two-Tower model for MS MARCO.
 # Created: 2025-04-21
+# Updated: 2025-04-21
 
 import os
 import torch
