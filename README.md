@@ -7,8 +7,6 @@
 </p>
 
 
-</p>
-
 # MS MARCO Search Engine 🗼🗼 🔍 🧠
 
 [![MLX Institute Logo](https://ml.institute/logo.png)](http://ml.institute)
