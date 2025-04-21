@@ -104,6 +104,15 @@ Use `python scripts/train_two_tower.py --help` for all options.
 python scripts/evaluate_two_tower.py --run-dir models/two_tower/TwoTower_RNN_... # Path to saved run
 ```
 
+
+Serving the model
+```bash
+docker build -t mlxw2 .
+docker run -p 8501:8501 mlxw2
+open http://0.0.0.0:8501
+```
+
+
 ## Future Work & Considerations 🔮
 
 *   **Implement Data Loading:** 📥 Replace placeholder functions in `src/two_tower/dataset.py` with actual MS MARCO loading, tokenization, and triplet generation logic.
