@@ -1,7 +1,9 @@
-# src/two_tower/dataset.py
+# Two Tower Search
+# File: src/two_tower/dataset.py
 # Copyright (c) 2025 Perceptron Party Team (Yurii, Pyry, Dimitris, Dimitar)
-# Description: Data loading, preprocessing, triplet generation for MS MARCO.
+# Description: Detects and sets the appropriate PyTorch device.
 # Created: 2025-04-21
+# Updated: 2025-04-21
 
 import torch
 from torch.utils.data import Dataset, DataLoader
