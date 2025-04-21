@@ -7,6 +7,8 @@
 paths:
   corpus_file: "data/text8.txt"                    # Path to the training corpus
   vocab_file: "models/word2vec/text8_vocab.json"   # Path to save/load vocabulary
+  pretrained_embeddings: "models/word2vec/SkipGram_D128_W5_NWAll_MF5_E3_LR0.001_BS512/model_state.pth"
+  two_tower_model_save_dir: "models/two_tower"
   model_save_dir: "models/word2vec"                # Directory to save trained w2v model
   log_dir: "logs"                                  # Directory for log files
   log_file_name: "dropout_disco.log"               # Name for the main log file
