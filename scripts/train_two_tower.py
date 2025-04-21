@@ -12,6 +12,7 @@ from torch.utils.data import DataLoader
 import argparse
 import wandb
 import sys
+import functools
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 # Get the parent directory (project root: Dropout_Disco/)
@@ -155,11 +156,13 @@ def main():
         # 5. Create DataLoader
         # Use number of CPU cores for num_workers, adjust if needed
         num_workers = os.cpu_count() // 2 if os.cpu_count() else 0
+        collate_partial = functools.partial(collate_triplets, padding_value=padding_idx)
+
         train_dataloader = DataLoader(
             train_dataset,
             batch_size=args.batch_size, # From command line args/config
             shuffle=True,               # Shuffle training data
-            collate_fn=lambda batch: collate_triplets(batch, padding_value=padding_idx),
+            collate_fn=collate_partial, # <-- Use the partial object
             num_workers=num_workers,
             pin_memory=True if device.type == 'cuda' else False # pin_memory useful for GPU
         )
@@ -169,23 +172,6 @@ def main():
         logger.error(f"❌ Failed during data preparation: {e}", exc_info=True)
         if run: run.finish(exit_code=1) # Finish W&B run if it started
         return # Stop execution
-
-
-    # Using placeholder data for now:
-    logger.warning("Using placeholder data for training!")
-    indexed_triplets = [{'query': [1,2,3], 'pos_doc': [4,5,6,7], 'neg_doc': [8,9,1,2]} for _ in range(1000)] # Example
-    if not indexed_triplets: logger.error("No training data."); return
-
-    train_dataset = TripletDataset(indexed_triplets)
-    train_dataloader = DataLoader(
-        train_dataset,
-        batch_size=args.batch_size,
-        shuffle=True,
-        collate_fn=collate_triplets, # Use custom collate
-        num_workers=0,
-        pin_memory=(device.type != 'mps')
-    )
-    logger.info("DataLoader ready.")
 
     # --- Initialize Model & Optimizer ---
     logger.info("--- Initializing Two-Tower Model ---")
