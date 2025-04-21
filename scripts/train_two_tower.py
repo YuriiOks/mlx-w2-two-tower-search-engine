@@ -254,17 +254,31 @@ def main():
         optimizer=optimizer,
         device=device,
         config=config,
-        wandb_run=run
+        wandb_run=run,
+        epochs=args.epochs
     )
 
     # --- Finalize ---
-    run_save_dir = os.path.join(
-        args.model_save_dir, 
-        run.name if run else "two_tower_local_run"
+
+    run_save_dir_base = config.get('paths', {}).get(
+        'two_tower_model_save_dir', 'models/two_tower'
     )
+    # Get the run name (important for directory structure)
+    run_name = run.name if run else "two_tower_local_run"
+    # Construct the specific directory for this run's artifacts
+    run_save_dir = os.path.join(run_save_dir_base, run_name)
+
+    # --- Calls to save_losses and plot_losses ---
+    logger.info("💾 Saving training losses...")
     loss_file = save_losses(epoch_losses, run_save_dir)
+    logger.info("📊 Generating loss plots...")
     plot_file = plot_losses(epoch_losses, run_save_dir)
+
+    # --- Construct path to the saved model ---
+    # This relies on the path used inside trainer.py's save block
+    logger.info("📂 Locating saved model file...")
     model_file = os.path.join(run_save_dir, "two_tower_final.pth")
+
 
     if run:
         logger.info("☁️ Logging final artifacts to W&B...")
