@@ -9,6 +9,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from utils import logger
+from typing import Optional, Tuple
 
 class QueryEncoder(nn.Module):
     '''Encodes queries into dense vectors using an RNN (e.g., GRU/LSTM).'''

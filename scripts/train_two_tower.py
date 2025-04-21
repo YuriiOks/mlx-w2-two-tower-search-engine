@@ -11,6 +11,15 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 import argparse
 import wandb
+import sys
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# Get the parent directory (project root: Dropout_Disco/)
+project_root = os.path.dirname(script_dir)
+# Add the project root to the Python path if it's not already there
+if project_root not in sys.path:
+    print(f"Adding project root to sys.path: {project_root}")
+    sys.path.insert(0, project_root)
 
 # Adjust relative paths if necessary based on execution location
 from utils import (
