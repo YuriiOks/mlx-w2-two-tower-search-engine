@@ -133,15 +133,17 @@ def train_two_tower_model(
             wandb_run.log(log_data)
 
     logger.info("🏁 Training finished.")
+
     # --- Save Model ---
     try:
-        # Save in run-specific dir
-        final_save_dir = os.path.join(model_save_dir, run_name)
+        # Get the correct base directory from config
+        model_save_dir_base = config.get('paths', {}).get('two_tower_model_save_dir', 'models/two_tower') # Use the specific key
+
+        # Construct the full save directory using the correct base
+        final_save_dir = os.path.join(model_save_dir_base, run_name) # <--- Ensure model_save_dir_base is correct
         os.makedirs(final_save_dir, exist_ok=True)
         model_path = os.path.join(final_save_dir, "two_tower_final.pth")
         torch.save(model.state_dict(), model_path)
-        logger.info(f"💾 Final model state saved to: {model_path}")
+        logger.info(f"💾 Final model state saved to: {model_path}") # Log the correct path
     except Exception as e:
         logger.error(f"❌ Failed to save final model: {e}")
-
-    return epoch_losses
