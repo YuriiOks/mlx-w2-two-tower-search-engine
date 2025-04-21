@@ -11,14 +11,13 @@ import torch.nn.functional as F
 from utils import logger
 from typing import Optional, Tuple
 
-class Encoder(nn.Module):
+class EncoderAveragePooling(nn.Module):
     '''Encodes queries into dense vectors using a linear layer and then average pooling.'''
-    def __init__(self, embedding_dim: int, hidden_dim: int, num_layers: int = 2, output_dim: int = 64):
+    def __init__(self, embedding_dim: int, hidden_dim: int, num_layers: int = 2):
         super().__init__()
         self.embedding_dim = embedding_dim
         self.hidden_dim = hidden_dim
         self.num_layers = num_layers
-        self.output_dim = output_dim
         logger.info(f"Initializing Query Encoder, Hidden: {hidden_dim}, Layers: {num_layers}")
         
         # Create a list of layers
@@ -33,11 +32,11 @@ class Encoder(nn.Module):
 
     def forward(self, query_embeds: torch.Tensor) -> torch.Tensor:
         output = self.network(query_embeds)
-        output = torch.mean(output, dim=self.output_dim)
+        output = torch.mean(output, dim=1)
         return output
 
 
-class TwoTowerModel(nn.Module):
+class TwoTowerModelAveragePooling(nn.Module):
     '''The main Two-Tower model combining embedding, encoders, and potentially projection.'''
     def __init__(self, vocab_size: int, embed_dim: int, hidden_dim: int, config: dict, pretrained_weights: Optional[torch.Tensor] = None):
         super().__init__()
@@ -62,8 +61,8 @@ class TwoTowerModel(nn.Module):
             "hidden_dim": tower_config.get('hidden_dim', 256),
             "num_layers": tower_config.get('num_layers', 1),
         }
-        self.query_encoder = Encoder(**encoder_args)
-        self.doc_encoder = Encoder(**encoder_args)
+        self.query_encoder = EncoderAveragePooling(**encoder_args)
+        self.doc_encoder = EncoderAveragePooling(**encoder_args)
 
 
     def encode_query(self, query_ids: torch.Tensor) -> torch.Tensor:

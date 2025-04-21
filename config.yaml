@@ -41,6 +41,14 @@ two_tower:
   dropout: 0.1 # Dropout probability in RNN
   bidirectional: False # Use bidirectional RNN?
 
+# --- Two Tower Model Hyperparameters ---
+two_tower_average_pooling:
+  model_type: "AveragePooling"
+  hidden_dim: 256 # Dimensionality of RNN hidden state / final encoding
+  num_layers: 2 # Number of layers in RNN
+  paths:
+    pretrained_embeddings: "models/word2vec/CBOW_D128_W5_NWAll_MF5_E15_LR0.001_BS512/model_state.pth"
+
 # --- Two Tower Training Hyperparameters ---
 two_tower_training:
   epochs: 5
