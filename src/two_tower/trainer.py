@@ -1,7 +1,9 @@
-# src/two_tower/trainer.py
+# Two Tower Search
+# File: src/two_tower/trainer.py
 # Copyright (c) 2025 Perceptron Party Team (Yurii, Pyry, Dimitris, Dimitar)
-# Description: Training loop for the Two-Tower model using Triplet Loss.
+# Description: Detects and sets the appropriate PyTorch device.
 # Created: 2025-04-21
+# Updated: 2025-04-21
 
 import torch
 import torch.nn as nn
